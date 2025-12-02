@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../auth/service/auth-service';
-import { Usuario } from '../../models/usuario';
+import { Usuario } from '../../models/usuario/usuario';
 import { UsuarioService } from '../../services/usuario-service/usuario-service';
 
 @Component({

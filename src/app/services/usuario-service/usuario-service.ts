@@ -1,18 +1,26 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { Usuario } from '../../models/usuario';
-import { UsuarioCreateDto } from '../../models/usuarioCreateDto';
+import { Usuario } from '../../models/usuario/usuario';
+import { UsuarioCreateDto } from '../../models/usuario/usuarioCreateDto';
+import { UsuarioResponseDto } from '../../models/usuario/usuarioResponseDto';
+import { LoginResponse } from '../../auth/models/loginResponse';
+import { LoginRequest } from '../../auth/models/LoginRequest';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UsuarioService {
   private http = inject(HttpClient);
-  private baseDatosUrl = 'http://localhost:3000/usuarios';
+  private baseDatosUrl = '/api/usuarios';
+  private loginUrl = '/api/login';
 
-  getAll(): Observable<Usuario[]> {
-    return this.http.get<Usuario[]>(this.baseDatosUrl);
+  login(credenciales: LoginRequest):Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(this.loginUrl, credenciales);
+  }
+
+  getAll(): Observable<UsuarioResponseDto[]> {
+    return this.http.get<UsuarioResponseDto[]>(this.baseDatosUrl);
   }
 
   getUsuarioById(id: string): Observable<Usuario> {

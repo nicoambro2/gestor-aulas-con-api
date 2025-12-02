@@ -5,7 +5,7 @@ import { Solicitud as SolicitudService } from '../../../services/solicitud';
 import { AuthService } from '../../../auth/service/auth-service';
 import type { Solicitud as SolicitudModel } from '../../../services/solicitud';
 import { UsuarioService } from '../../../services/usuario-service/usuario-service';
-import type { Usuario } from '../../../models/usuario';
+import type { Usuario } from '../../../models/usuario/usuario';
 import { RouterLink } from "@angular/router";
 
 

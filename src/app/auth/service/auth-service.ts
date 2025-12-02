@@ -3,7 +3,7 @@ import { LoginRequest } from '../models/LoginRequest';
 import { map, Observable, tap } from 'rxjs';
 import { UsuarioService } from '../../services/usuario-service/usuario-service';
 import { AuthError } from '../errores/AuthError';
-import { Usuario } from '../../models/usuario';
+import { Usuario } from '../../models/usuario/usuario';
 
 @Injectable({
   providedIn: 'root',
@@ -18,13 +18,16 @@ export class AuthService {
     nombre: '',
     rol: undefined,
     email: '',
-    activo: false,
   });
 
   constructor() {
   // Limpiar cualquier sesión previa para que siempre inicie sin usuario logueado
-  this.limpiarSesion();
-  // this.cargarSesion();
+  //this.limpiarSesion();
+    this.cargarSesion();
+  }
+
+  iniciarSesion(credenciales: LoginRequest) {
+    this.usuarioService.login(credenciales);
   }
 
   private cargarSesion(): void {
@@ -53,7 +56,6 @@ export class AuthService {
       nombre: usuario.nombre,
       apellido: usuario.apellido,
       rol: usuario.rol,
-      activo: usuario.activo,
     };
     localStorage.setItem('usuario', JSON.stringify(usuarioParaGuardar));
   }
@@ -76,7 +78,7 @@ export class AuthService {
 
   validarCredenciales(credenciales: LoginRequest): Observable<Usuario> {
     console.log('validar credenciales');
-    return this.usuarioService.getUsuarioByEmail(credenciales.email).pipe(
+    return this.usuarioService.getUsuarioByEmail(credenciales.username).pipe(
       map((usuarios) => {
         if (usuarios.length > 0) {
           const usuario = usuarios[0];
@@ -92,7 +94,6 @@ export class AuthService {
         throw AuthError.UsuarioNoRegistrado();
       }),
       tap((usuario) => {
-        console.log('guardar datos de sesion');
         this.usuarioLogueado.set(true);
         this.infoUsuario.set(usuario);
         this.guardarSesion(usuario);

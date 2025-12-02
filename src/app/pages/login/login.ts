@@ -3,6 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../auth/service/auth-service';
 import { LoginRequest } from '../../auth/models/LoginRequest';
+import { UsuarioService } from '../../services/usuario-service/usuario-service';
 
 @Component({
   selector: 'app-login',
@@ -34,8 +35,15 @@ export class Login {
   Enviar(): void {
     if (this.form.invalid) { return; }
 
-    this.mensajeError.set('');
+    const login: LoginRequest = {
+      username: this.form.value.email!,
+      password: this.form.value.password!
+    };
 
+    this.authService.iniciarSesion(login);
+
+    //this.mensajeError.set('');
+/*
     this.authService.validarCredenciales(this.form.value as LoginRequest).subscribe({
       next: () => {
         this.router.navigateByUrl('/dashboard');
@@ -44,5 +52,7 @@ export class Login {
         this.mensajeError.set(error.message);
       }
     });
+*/
   }
+
 }

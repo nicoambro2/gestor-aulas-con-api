@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { UsuarioService } from '../../../services/usuario-service/usuario-service';
-import { Usuario } from '../../../models/usuario';
+import { Usuario } from '../../../models/usuario/usuario';
 import { AuthService } from '../../../auth/service/auth-service';
 
 @Component({

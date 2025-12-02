@@ -8,8 +8,8 @@ import {
   ɵInternalFormsSharedModule,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Usuario } from '../../../models/usuario';
-import { UsuarioCreateDto } from '../../../models/usuarioCreateDto';
+import { Usuario } from '../../../models/usuario/usuario';
+import { UsuarioCreateDto } from '../../../models/usuario/usuarioCreateDto';
 
 @Component({
   selector: 'app-registrar-usuario',

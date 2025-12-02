@@ -5,5 +5,5 @@ export interface Usuario {
     password?:string;
     rol?: 'ADMIN' | 'PROFESOR';
     email:string;
-    activo:boolean;
+    activo?:boolean;
 }

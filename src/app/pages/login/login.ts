@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../auth/service/auth-service';
 import { LoginRequest } from '../../auth/models/LoginRequest';
 import { UsuarioService } from '../../services/usuario-service/usuario-service';
+import { LoginResponse } from '../../auth/models/loginResponse';
 
 @Component({
   selector: 'app-login',
@@ -32,7 +33,7 @@ export class Login {
 
   mensajeError = signal('');
 
-  Enviar(): void {
+  Enviar() {
     if (this.form.invalid) { return; }
 
     const login: LoginRequest = {
@@ -40,9 +41,18 @@ export class Login {
       password: this.form.value.password!
     };
 
-    this.authService.iniciarSesion(login);
+    this.mensajeError.set('');
 
-    //this.mensajeError.set('');
+    this.authService.iniciarSesion(login).subscribe({
+      next: (res) => {
+        localStorage.setItem("logData", JSON.stringify(res.token));
+        this.router.navigateByUrl('/dashboard');
+      },
+      error: (err) => {
+        this.mensajeError.set(err.error.message);
+      }
+    });
+
 /*
     this.authService.validarCredenciales(this.form.value as LoginRequest).subscribe({
       next: () => {

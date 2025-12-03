@@ -1,9 +1,11 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { LoginRequest } from '../models/LoginRequest';
-import { map, Observable, tap } from 'rxjs';
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { UsuarioService } from '../../services/usuario-service/usuario-service';
 import { AuthError } from '../errores/AuthError';
 import { Usuario } from '../../models/usuario/usuario';
+import { LoginResponse } from '../models/loginResponse';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -26,8 +28,16 @@ export class AuthService {
     this.cargarSesion();
   }
 
-  iniciarSesion(credenciales: LoginRequest) {
-    this.usuarioService.login(credenciales);
+  iniciarSesion(credenciales: LoginRequest): Observable<LoginResponse> {
+    return this.usuarioService.login(credenciales)
+      .pipe(
+        tap(() => {
+          this.usuarioLogueado.set(true);
+        }),
+        catchError((error: HttpErrorResponse) => {
+          return throwError(() => error);
+        })
+      );
   }
 
   private cargarSesion(): void {
@@ -49,7 +59,7 @@ export class AuthService {
     this.usuarioReset();
   }
 
-  private guardarSesion(usuario: Usuario): void {
+  private guardarSesion(usuario: Usuario) {
     const usuarioParaGuardar = {
       id: usuario.id,
       email: usuario.email,
@@ -75,7 +85,7 @@ export class AuthService {
       })
     );
   }
-
+/*
   validarCredenciales(credenciales: LoginRequest): Observable<Usuario> {
     console.log('validar credenciales');
     return this.usuarioService.getUsuarioByEmail(credenciales.username).pipe(
@@ -100,7 +110,7 @@ export class AuthService {
       })
     );
   }
-
+*/
   validarPassword(password1: string, password2: string): boolean {
     if (password1 === password2) {
       return true;

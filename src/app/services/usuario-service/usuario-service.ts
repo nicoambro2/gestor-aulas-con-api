@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { Usuario } from '../../models/usuario/usuario';
 import { UsuarioCreateDto } from '../../models/usuario/usuarioCreateDto';
 import { UsuarioResponseDto } from '../../models/usuario/usuarioResponseDto';
@@ -13,10 +13,15 @@ import { LoginRequest } from '../../auth/models/LoginRequest';
 export class UsuarioService {
   private http = inject(HttpClient);
   private baseDatosUrl = '/api/usuarios';
-  private loginUrl = '/api/login';
+  private authUrl = '/api/auth';
 
   login(credenciales: LoginRequest):Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(this.loginUrl, credenciales);
+    return this.http.post<LoginResponse>(`${this.authUrl}/login`, credenciales)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          return throwError(() => error);
+        })
+      );
   }
 
   getAll(): Observable<UsuarioResponseDto[]> {

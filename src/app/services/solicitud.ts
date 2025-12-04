@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 
@@ -23,9 +23,8 @@ export interface Solicitud{
   providedIn: 'root',
 })
 export class Solicitud {
-  private apiUrl = 'http://localhost:3000/solicitudes';
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  private apiUrl = 'api/solicitudes';
 
   getSolicitudes(): Observable<Solicitud[]> {
     return this.http.get<Solicitud[]>(this.apiUrl);

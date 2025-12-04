@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchError, map, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { Usuario } from '../../models/usuario/usuario';
 import { UsuarioCreateDto } from '../../models/usuario/usuarioCreateDto';
 import { UsuarioResponseDto } from '../../models/usuario/usuarioResponseDto';
@@ -33,7 +33,11 @@ export class UsuarioService {
   }
 
   getUsuarioByEmail(email: string): Observable<Usuario[]> {
-    return this.http.get<Usuario[]>(`${this.baseDatosUrl}?email=${email}`);
+    return this.http.get<Usuario[]>(`${this.baseDatosUrl}/email/${email}`);
+  }
+
+  getUsuarioLogueado(): Observable<UsuarioResponseDto> {
+    return this.http.get<UsuarioResponseDto>(`${this.baseDatosUrl}/me`);
   }
 
   actualizarUsuario(usuario: Usuario): Observable<Usuario> {
@@ -53,11 +57,11 @@ export class UsuarioService {
   }
 
   crear(usuario: UsuarioCreateDto): Observable<Usuario> {
-    const usuarioNuevo = {
-      ...usuario,
-      activo: true
-    };
-    return this.http.post<Usuario>(this.baseDatosUrl, usuarioNuevo);
+    return this.http.post<Usuario>(this.baseDatosUrl, usuario).pipe(
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => error);
+      })
+    );
   }
 
   convertirRol(rol: string): 'ADMIN' | 'PROFESOR' {

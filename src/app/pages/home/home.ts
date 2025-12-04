@@ -1,5 +1,6 @@
-import { Component, inject } from '@angular/core';
-import { UsuarioService } from '../../services/usuario-service/usuario-service';
+import { Component, inject, OnInit } from '@angular/core';
+import { AuthService } from '../../auth/service/auth-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -7,14 +8,14 @@ import { UsuarioService } from '../../services/usuario-service/usuario-service';
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
-export class Home {
-  private usuarioService = inject(UsuarioService);
+export class Home implements OnInit {
+  private authService = inject(AuthService);
+  private router = inject(Router)
 
-constructor() {
-  this.usuarioService.getAll().subscribe({
-    next: (usuarios) => {
-      console.log('Lista de usuarios:', usuarios);
-    },
-  });
-}
+  ngOnInit(): void {
+    if(this.authService.usuarioLogueado()) {
+      this.router.navigateByUrl('/dashboard');
+    }
+  }
+
 }

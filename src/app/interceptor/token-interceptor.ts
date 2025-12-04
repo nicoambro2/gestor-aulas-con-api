@@ -5,9 +5,8 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
-  const logData = localStorage.getItem('logData');
-  if(logData !== null) {
-    const token = JSON.parse(logData).token;
+  const token = localStorage.getItem('logData');
+  if(token !== null) {
     const newReqData = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`

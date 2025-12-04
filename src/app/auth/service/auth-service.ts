@@ -2,7 +2,6 @@ import { inject, Injectable, signal } from '@angular/core';
 import { LoginRequest } from '../models/LoginRequest';
 import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { UsuarioService } from '../../services/usuario-service/usuario-service';
-import { AuthError } from '../errores/AuthError';
 import { Usuario } from '../../models/usuario/usuario';
 import { LoginResponse } from '../models/loginResponse';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -14,6 +13,7 @@ export class AuthService {
   private usuarioService = inject(UsuarioService);
 
   usuarioLogueado = signal<boolean>(false);
+
   infoUsuario = signal<Usuario>({
     id: '',
     apellido: '',
@@ -22,9 +22,8 @@ export class AuthService {
     email: '',
   });
 
+
   constructor() {
-  // Limpiar cualquier sesión previa para que siempre inicie sin usuario logueado
-  //this.limpiarSesion();
     this.cargarSesion();
   }
 
@@ -40,36 +39,15 @@ export class AuthService {
       );
   }
 
+
   private cargarSesion(): void {
-    const usuarioGuardado = localStorage.getItem('usuario');
-    if (usuarioGuardado) {
-      try {
-        const usuario: Usuario = JSON.parse(usuarioGuardado);
-        this.usuarioLogueado.set(true);
-        this.infoUsuario.set(usuario);
-      } catch (error) {
-        localStorage.removeItem('usuario');
-      }
+    const isLoggedIn = localStorage.getItem('logData');
+    if (isLoggedIn) {
+      this.usuarioLogueado.set(true);
     }
   }
 
-  private limpiarSesion(): void {
-    localStorage.removeItem('usuario');
-    this.usuarioLogueado.set(false);
-    this.usuarioReset();
-  }
-
-  private guardarSesion(usuario: Usuario) {
-    const usuarioParaGuardar = {
-      id: usuario.id,
-      email: usuario.email,
-      nombre: usuario.nombre,
-      apellido: usuario.apellido,
-      rol: usuario.rol,
-    };
-    localStorage.setItem('usuario', JSON.stringify(usuarioParaGuardar));
-  }
-
+/*
   actualizarInfoUsuario(usuario: Usuario): Observable<Usuario> {
     return this.usuarioService.actualizarUsuario(usuario).pipe(
       tap((usuarioActualizado) => {
@@ -85,32 +63,8 @@ export class AuthService {
       })
     );
   }
-/*
-  validarCredenciales(credenciales: LoginRequest): Observable<Usuario> {
-    console.log('validar credenciales');
-    return this.usuarioService.getUsuarioByEmail(credenciales.username).pipe(
-      map((usuarios) => {
-        if (usuarios.length > 0) {
-          const usuario = usuarios[0];
-          if(!usuario.activo){
-            throw AuthError.UsuarioEliminado();
-          }
-          if (usuario.password === credenciales.password) {
-            return usuario;
-          } else {
-            throw AuthError.CredencialesInvalidas();
-          }
-        }
-        throw AuthError.UsuarioNoRegistrado();
-      }),
-      tap((usuario) => {
-        this.usuarioLogueado.set(true);
-        this.infoUsuario.set(usuario);
-        this.guardarSesion(usuario);
-      })
-    );
-  }
 */
+
   validarPassword(password1: string, password2: string): boolean {
     if (password1 === password2) {
       return true;
@@ -118,25 +72,15 @@ export class AuthService {
     return false;
   }
 
-  esAdmin(): boolean {
-    const usuario = this.infoUsuario();
-    return usuario?.rol === 'ADMIN';
+  rolUsuario(): Observable<String> {
+    return this.usuarioService.getUsuarioLogueado().pipe(
+      map(usuario => usuario?.rol)
+    );
   }
 
   logout(): void {
     this.usuarioLogueado.set(false);
-    this.usuarioReset();
-    localStorage.removeItem('usuario');
+    localStorage.removeItem('logData');
   }
 
-  private usuarioReset(): void {
-    this.infoUsuario.set({
-      id: '',
-      apellido: '',
-      nombre: '',
-      rol: undefined,
-      email: '',
-      activo: false,
-    });
-  }
 }

@@ -5,10 +5,8 @@ import {
   FormBuilder,
   ReactiveFormsModule,
   Validators,
-  ɵInternalFormsSharedModule,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { Usuario } from '../../../models/usuario/usuario';
 import { UsuarioCreateDto } from '../../../models/usuario/usuarioCreateDto';
 
 @Component({
@@ -47,38 +45,24 @@ export class RegistrarUsuario {
       return;
     }
 
-    this.usuarioService.getUsuarioByEmail(this.form.value.email!).subscribe({
-      next: (data) => {
-        if (data.length > 0) {
-          this.error.set('Ya existe un usuario registrado con este Email');
-          return;
-        }
-
-        this.usuarioService.crear(this.buildUsuario()).subscribe({
-          next: () => {
-            this.mensajeExito.set('¡Usuario creado exitosamente!');
-            this.form.reset();
-          },
-          error: (err) => {
-            console.log(err);
-            this.error.set('Error al registrar el nuevo usuario');
-          },
-        });
+    this.usuarioService.crear(this.buildUsuario()).subscribe({
+      next: () => {
+        this.mensajeExito.set('¡Usuario creado exitosamente!');
+        this.form.reset();
       },
       error: (err) => {
-        console.log(err);
-        this.error.set('Error al verificar el email');
-      },
-    });
+        this.error.set(err.error);
+      }
+    })
   }
 
   private buildUsuario(): UsuarioCreateDto {
     return {
-      nombre: this.form.value.nombre!,
-      apellido: this.form.value.apellido!,
+      nombre: this.form.value.nombre!.trim(),
+      apellido: this.form.value.apellido!.trim(),
       password: this.form.value.password!,
       rol: this.usuarioService.convertirRol(this.form.value.rol!),
-      email: this.form.value.email!,
+      email: this.form.value.email!.trim(),
     };
   }
 }

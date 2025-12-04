@@ -77,7 +77,7 @@ export class PerfilComponent implements OnInit {
       apellido: this.formPerfil.value.apellido!,
       email: this.formPerfil.value.email!,
     };
-
+/*
     this.auth.actualizarInfoUsuario(usuarioActualizado).subscribe({
       next: () => {
         this.mensajePerfil.set('¡Perfil actualizado correctamente!');
@@ -91,6 +91,7 @@ export class PerfilComponent implements OnInit {
         this.loadingPerfil = false;
       },
     });
+*/
   }
 
   enviarPassword() {

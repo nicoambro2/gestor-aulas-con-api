@@ -20,8 +20,18 @@
               class="form-control"
               [class.error]="formPerfil.get('nombre')?.invalid"
             />
-            @if (formPerfil.get('nombre')?.invalid) {
-            <div class="error-message">El nombre es requerido</div>
+            @if (formPerfil.get('nombre')?.invalid && formPerfil.get('nombre')?.touched) {
+            <div class="error-message">
+              @if (formPerfil.get('nombre')?.errors?.['required']) {
+                El nombre es requerido
+              }
+              @if (formPerfil.get('nombre')?.errors?.['minlength']) {
+                El nombre debe tener al menos 2 caracteres
+              }
+              @if (formPerfil.get('nombre')?.errors?.['maxlength']) {
+                El nombre no puede superar los 50 caracteres
+              }
+            </div>
             }
           </div>
 
@@ -35,8 +45,18 @@
               [class.error]="
                 formPerfil.get('apellido')?.invalid"
             />
-            @if (formPerfil.get('apellido')?.invalid) {
-            <div class="error-message">El apellido es requerido</div>
+            @if (formPerfil.get('apellido')?.invalid && formPerfil.get('apellido')?.touched) {
+            <div class="error-message">
+              @if (formPerfil.get('apellido')?.errors?.['required']) {
+                El apellido es requerido
+              }
+              @if (formPerfil.get('apellido')?.errors?.['minlength']) {
+                El apellido debe tener al menos 2 caracteres
+              }
+              @if (formPerfil.get('apellido')?.errors?.['maxlength']) {
+                El apellido no puede superar los 50 caracteres
+              }
+            </div>
             }
           </div>
         </div>
@@ -50,10 +70,17 @@
             class="form-control"
             [class.error]="formPerfil.get('email')?.invalid"
           />
-          @if (formPerfil.get('email')?.invalid) {
+          @if (formPerfil.get('email')?.invalid && formPerfil.get('email')?.touched) {
           <div class="error-message">
-            @if (formPerfil.get('email')?.errors?.['required']) { El email es requerido } @if
-            (formPerfil.get('email')?.errors?.['email']) { Ingresa un email válido }
+            @if (formPerfil.get('email')?.errors?.['required']) {
+              El email es requerido
+            }
+            @if (formPerfil.get('email')?.errors?.['email']) {
+              Ingresa un email válido
+            }
+            @if (formPerfil.get('email')?.errors?.['maxlength']) {
+              El email no puede superar los 100 caracteres
+            }
           </div>
           }
         </div>
@@ -106,11 +133,17 @@
             <div class="error-message">
               @if (formPassword.get('passwordNuevo')?.errors?.['required'] &&
               formPassword.get('passwordNuevo')?.touched &&
-              formPassword.get('passwordNuevo')?.dirty){ La contraseña es requerida } @if
-              (formPassword.get('passwordNuevo')?.errors?.['minlength'] &&
-              formPassword.get('passwordNuevo')?.touched &&
-              formPassword.get('passwordNuevo')?.dirty) { La contraseña debe tener mínimo 3
-              caracteres }
+              formPassword.get('passwordNuevo')?.dirty) {
+                La nueva contraseña es requerida
+              }
+              @if (formPassword.get('passwordNuevo')?.errors?.['minlength'] &&
+              formPassword.get('passwordNuevo')?.touched) {
+                La contraseña debe tener al menos 6 caracteres
+              }
+              @if (formPassword.get('passwordNuevo')?.errors?.['maxlength'] &&
+              formPassword.get('passwordNuevo')?.touched) {
+                La contraseña no puede superar los 100 caracteres
+              }
             </div>
           </div>
 
@@ -126,8 +159,9 @@
             <div class="error-message">
               @if (formPassword.get('passwordConfirmar')?.errors?.['required'] &&
               formPassword.get('passwordConfirmar')?.touched &&
-              formPassword.get('passwordConfirmar')?.dirty){ Es necesario que repitas la nueva
-              contraseña }
+              formPassword.get('passwordConfirmar')?.dirty) {
+                Debes confirmar la nueva contraseña
+              }
             </div>
           </div>
         </div>

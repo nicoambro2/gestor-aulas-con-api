@@ -6,6 +6,8 @@ import { UsuarioCreateDto } from '../../models/usuario/usuarioCreateDto';
 import { UsuarioResponseDto } from '../../models/usuario/usuarioResponseDto';
 import { LoginResponse } from '../../auth/models/loginResponse';
 import { LoginRequest } from '../../auth/models/LoginRequest';
+import { UsuarioUpdateDto } from '../../models/usuario/usuarioUpdateDto';
+import { PasswordValidacionDto } from '../../auth/models/passwordValidacionDto';
 
 @Injectable({
   providedIn: 'root',
@@ -28,8 +30,8 @@ export class UsuarioService {
     return this.http.get<UsuarioResponseDto[]>(this.baseDatosUrl);
   }
 
-  getUsuarioById(id: string): Observable<Usuario> {
-    return this.http.get<Usuario>(`${this.baseDatosUrl}/${id}`);
+  getUsuarioById(id: string): Observable<UsuarioResponseDto> {
+    return this.http.get<UsuarioResponseDto>(`${this.baseDatosUrl}/${id}`);
   }
 
   getUsuarioByEmail(email: string): Observable<Usuario[]> {
@@ -37,11 +39,15 @@ export class UsuarioService {
   }
 
   getUsuarioLogueado(): Observable<UsuarioResponseDto> {
-    return this.http.get<UsuarioResponseDto>(`${this.baseDatosUrl}/me`);
+    return this.http.get<UsuarioResponseDto>(`${this.baseDatosUrl}/me`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => error);
+      })
+    );
   }
 
-  actualizarUsuario(usuario: Usuario): Observable<Usuario> {
-    return this.http.put<Usuario>(`${this.baseDatosUrl}/${usuario.id}`, usuario);
+  actualizarUsuario(usuario: UsuarioUpdateDto): Observable<UsuarioResponseDto> {
+    return this.http.patch<UsuarioResponseDto>(this.baseDatosUrl, usuario);
   }
 
   actualizarPassword(id: string, password: string): Observable<Usuario> {
@@ -70,6 +76,14 @@ export class UsuarioService {
       return 'ADMIN';
     }
     return 'PROFESOR';
+  }
+
+  validarPassword(password: PasswordValidacionDto): Observable<void> {
+    return this.http.post<void>(`${this.authUrl}/validarPassword`, password).pipe(
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => error);
+      })
+    );
   }
 
   obtenerUsuariosPaginados(
